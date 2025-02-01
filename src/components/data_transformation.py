@@ -33,9 +33,9 @@ class DataTransformation:
 
         try:
             categorical_features = ['education', 'self_employed']
-            numeric_features = ['no_of_dependents','income_annum','loan_amount',
-                                'loan_term', 'cibil_score','income_to_loan_ratio','loan_to_cibil_ratio',
-                                'loan_term_to_income_ratio','assets']
+            numeric_features = ['no_of_dependents', 'income_annum', 'loan_amount',
+                                'loan_term', 'cibil_score', 'income_to_loan_ratio', 'loan_to_cibil_ratio',
+                                'loan_term_to_income_ratio', 'assets']
             num_pipeline = Pipeline(
                 steps=[
                     ('Imputer', SimpleImputer(strategy='median')),
@@ -101,7 +101,6 @@ class DataTransformation:
             logging.info('Obtaining Preprocessing object')
 
             preprocessor_obj = self.get_data_transformation_obj()
-
 
             categorical_features = ['education', 'self_employed']
             numeric_features = ['no_of_dependents', "income_annum", "loan_amount", "loan_term", "assets",
