@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder, MinMaxScaler
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.exception import CustomException
@@ -34,22 +34,22 @@ class DataTransformation:
         try:
             categorical_features = ['education', 'self_employed']
             numeric_features = ['no_of_dependents', 'income_annum', 'loan_amount',
-                                'loan_term', 'cibil_score', 'income_to_loan_ratio', 'loan_to_cibil_ratio',
+                                'loan_term', 'income_to_loan_ratio', 'loan_to_cibil_ratio',
                                 'loan_term_to_income_ratio', 'assets']
             num_pipeline = Pipeline(
                 steps=[
                     ('Imputer', SimpleImputer(strategy='median')),
-                    ('Scaler', StandardScaler())
+                    ('Scaler', MinMaxScaler())
                 ]
             )
             logging.info('Numerical Scaling Completed')
             cat_pipeline = Pipeline(
                 steps=[
                     ('Imputer', SimpleImputer(strategy='most_frequent')),
-                    ('OneHot', OneHotEncoder(sparse_output=False)),
-                    ('Scaler', StandardScaler())
+                    ('OneHot', OneHotEncoder(drop='first'))
                 ]
             )
+
             logging.info('Categorical Encoding Completed')
 
             preprocessor = ColumnTransformer(
@@ -73,6 +73,10 @@ class DataTransformation:
             train_df.columns = train_df.columns.str.strip().str.replace(' ', '')
             test_df.columns = test_df.columns.str.strip().str.replace(' ', '')
 
+            for features in ['education', 'self_employed', 'loan_status']:
+                train_df[features] = train_df[features].apply(lambda x: x.strip())
+                test_df[features] = test_df[features].apply(lambda x: x.strip())
+
             train_df["income_to_loan_ratio"] = train_df["income_annum"] / train_df["loan_amount"]
             train_df["loan_to_cibil_ratio"] = train_df["loan_amount"] / train_df["cibil_score"]
             train_df["loan_term_to_income_ratio"] = train_df['loan_term'] / train_df["income_annum"]
@@ -87,9 +91,9 @@ class DataTransformation:
                 'luxury_assets_value'] + test_df['bank_asset_value']
 
             train_df.drop(columns=['loan_id', 'residential_assets_value', 'commercial_assets_value',
-                                   'luxury_assets_value', 'bank_asset_value'], inplace=True)
+                                   'luxury_assets_value', 'bank_asset_value','cibil_score'], inplace=True)
             test_df.drop(columns=['loan_id', 'residential_assets_value', 'commercial_assets_value',
-                                  'luxury_assets_value', 'bank_asset_value'], inplace=True)
+                                  'luxury_assets_value', 'bank_asset_value', 'cibil_score'], inplace=True)
 
             logging.info('Derived columns and asset calculation completed')
 
