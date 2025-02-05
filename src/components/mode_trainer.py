@@ -92,7 +92,7 @@ class ModelTrainer:
                 ,
 
                 'GradientBoost': {
-                    'n_estimators': [50, 100, 200],  # Increased for better learning
+                    'n_estimators': [50, 100,  150],  # Increased for better learning
                     'learning_rate': [0.01, 0.05, 0.1],  # Kept the same
                     'max_depth': [3, 5, 7, 10],  # Reduced to prevent overfitting
                     'min_samples_split': [5, 10, 20],  # More flexibility in splits
@@ -103,7 +103,7 @@ class ModelTrainer:
                     'ccp_alpha': [0.0, 0.001, 0.01]  # Finer regularization control
 },
 
-                'AdaBoost': {
+                   'AdaBoost': {
                     'n_estimators': [50, 100, 150],  # More weak learners
                     'learning_rate': [0.01, 0.05, 0.1, 0.2],  # Better granularity
 }

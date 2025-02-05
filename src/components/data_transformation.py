@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+from scipy.stats import mstats
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
@@ -46,7 +47,7 @@ class DataTransformation:
             cat_pipeline = Pipeline(
                 steps=[
                     ('Imputer', SimpleImputer(strategy='most_frequent')),
-                    ('OneHot', OneHotEncoder(drop='first'))
+                    ('OneHotEncoder', OneHotEncoder(handle_unknown='ignore',drop='first'))
                 ]
             )
 
@@ -94,6 +95,9 @@ class DataTransformation:
                                    'luxury_assets_value', 'bank_asset_value','cibil_score'], inplace=True)
             test_df.drop(columns=['loan_id', 'residential_assets_value', 'commercial_assets_value',
                                   'luxury_assets_value', 'bank_asset_value', 'cibil_score'], inplace=True)
+
+            train_df['loan_amount'] = mstats.winsorize(train_df['loan_amount'], limits=[0.1, 0.1])
+            train_df['assets'] = mstats.winsorize(train_df['assets'], limits=[0.1, 0.1])
 
             logging.info('Derived columns and asset calculation completed')
 
